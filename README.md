@@ -7,13 +7,17 @@
 
 * CI/CD、コンテナ起動はAppRunnerで実現
     * ソースコードをGitHubで管理し、git push等するとAppRunnerでビルド&デプロイ
+        * AppRunnerがサポートするソースコードリポジトリは現状GitHubのみ
+        * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/architecture.html
 * メトリックスのモニタリング
-    * TBD
+    * AppRunnerの機能で実現
+        * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/monitor-cw.html
 * ログの転送
-    * TBD
+    * AppRunnerの機能でCloudWatch Logsへログ出力
+        * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/monitor-cwl.html
 * オートスケーリング
     * AppRunnerの機能で実現
-
+        * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/manage-autoscaling.html
 ## 事前準備
 * 別途、以下の2つのSpringBootAPのプロジェクトが以下のリポジトリ名でGitHubにある前提
   * backend-for-frontend
