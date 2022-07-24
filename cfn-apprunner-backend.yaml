@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AppRunner Template for CloudFormation Demo.
+#Metadata: 
+
+Parameters: 
+  StackPrefix:
+    Description: Stack Resource Name Prefix
+    Type: String
+    Default: Demo
+  GitHubConnectionArn:
+    Description: GitHub ConnectionArn
+    Type: String    
+  GitHubRepositoryUrl:
+    Description: GitHub Repository URL
+    Type: String
+  GitHubRepositoyBranch:
+    Description: GitHub Repository Branch
+    Type: String
+    Default: master
+  EnvironmentType:
+    Description: The environment type
+    Type: String
+    AllowedValues: ["Dev", "Staging", "Production"]
+    Default: Production
+    ConstraintDescription: must be a prod or test    
+
+
+#Mappings: 
+
+#Conditions: 
+
+Resources:
+  BackendAppRunner:
+    Type: AWS::AppRunner::Service
+    Properties:
+      ServiceName: !Sub ${StackPrefix}-BackendService
+      SourceConfiguration:
+        AuthenticationConfiguration:
+          ConnectionArn: !Ref GitHubConnectionArn
+        AutoDeploymentsEnabled: true
+        CodeRepository:
+          RepositoryUrl: !Ref GitHubRepositoryUrl
+          SourceCodeVersion:
+            Type: BRANCH
+            Value: !Ref GitHubRepositoyBranch
+          CodeConfiguration:
+            ConfigurationSource: API
+            CodeConfigurationValues:
+              Runtime: CORRETTO_11
+              BuildCommand: "mvn install"
+              StartCommand: "java -jar target/mynavi-sample-aws-ecs-backend-0.0.1-SNAPSHOT.jar"
+              Port: 8080
+              RuntimeEnvironmentVariables:
+                - Name: SPRING_PROFILES_ACTIVE
+                  Value: !Ref EnvironmentType 
+#TODO Parameterized
+      InstanceConfiguration:
+        Cpu: 1 vCPU
+        Memory: 2 GB
+
+Outputs:  
+  BackendAppRunnerDomainName:
+    Description: Backend AppRunner DomainName
+    Value: !Sub https://${BackendAppRunner.ServiceUrl}
+    Export: 
+      Name: !Sub ${StackPrefix}-BackendService-DomainName
+  BackendServiceURI:
+    Description: Backend Service URL
+    Value: !Sub https://${BackendAppRunner.ServiceUrl}/backend/api/v1/users
+    Export: 
+      Name: !Sub ${StackPrefix}-BackendService-URI
