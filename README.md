@@ -65,3 +65,8 @@ aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body
 * BFFアプリケーションの確認    
   * ブラウザで「http://(Public ALBのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
     * CloudFormationの「APPRUNNER-BFF-Stack」スタックの出力「BffServiceURI」のURLを参照
+
+### 3. CI/CDの確認
+* ソースコードの変更
+  * 何らかのソースコードの変更を加えて、GitHubにプッシュする
+  * GitHubに新しいソースコードがプッシュされることで、AppRunnerでビルド実行され新しいAPがデプロイされることを確認する
