@@ -59,11 +59,11 @@ aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body
 
 ### 2. APの実行確認
 * Backendアプリケーションの確認
-  * ブラウザで「http://(Public ALBのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
+  * ブラウザで「http://(AppRunnerのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
     * CloudFormationの「APPRUNNER-BG-Stack」スタックの出力「BackendServiceURI」のURLを参照
 
 * BFFアプリケーションの確認    
-  * ブラウザで「http://(Public ALBのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
+  * ブラウザで「http://(AppRunnerのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
     * CloudFormationの「APPRUNNER-BFF-Stack」スタックの出力「BffServiceURI」のURLを参照
 
 ### 3. CI/CDの確認
