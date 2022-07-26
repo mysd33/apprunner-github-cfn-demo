@@ -6,7 +6,7 @@
 
 
 * CI/CD、コンテナ起動はAppRunnerで実現
-    * ソースコードをGitHubで管理し、git push等するとAppRunnerでビルド&デプロイ
+    * ソースコードをGitHubで管理し、git pushするとAppRunnerでビルド&デプロイ
         * AppRunnerがサポートするソースコードリポジトリは現状GitHubのみ
         * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/architecture.html
 * メトリックスのモニタリング
@@ -18,6 +18,12 @@
 * オートスケーリング
     * AppRunnerの機能で実現
         * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/manage-autoscaling.html
+    * 現在、CloudFormationでは、AutoScalingConfigurationのリソースが作成不可なのでデフォルトのオートスケーリング設定
+* VPCコネクタによるVPC内のリソースアクセス
+    * VPCコネクタにより、パブリックでないRDS等のVPCリソースへのアクセスが可能
+        * TODO: 本サンプルでは未実施
+    * インバウンドトラフィックには利用できないので、インバウンドトラフィックは従来どおりパブリックなアクセスのみ、IP等でのアクセス制限もできないのでAppRunnerは完全閉域な構成には向かない
+
 ## 事前準備
 * 別途、以下の2つのSpringBootAPのプロジェクトが以下のリポジトリ名でGitHubにある前提
   * backend-for-frontend
@@ -26,11 +32,13 @@
   * backend
     * BackendのAP
     * backendという別のリポジトリに資材は格納
-* マネージドコンソール等科、AppRunnerの「GitHub接続」を作成しておく
+* マネージドコンソール等、AppRunnerの「GitHub接続」を作成しておく
     * https://docs.aws.amazon.com/ja_jp/apprunner/latest/dg/manage-connections.html    
 
-## AppRunnerの作成
-* Backend APの起動
+## AppRunner環境
+
+### 1. AppRunnerの作成
+* Backendアプリケーションの起動
 ```sh
 aws cloudformation validate-template --template-body file://cfn-apprunner-backend.yaml
 
@@ -39,7 +47,7 @@ aws cloudformation create-stack --stack-name APPRUNNER-BG-Stack --template-body 
 aws cloudformation create-stack --stack-name APPRUNNER-BG-Stack --template-body file://cfn-apprunner-backend.yaml --parameters ParameterKey=GitHubConnectionArn,ParameterValue=arn:aws:apprunner:ap-northeast-1:999999999999:connection/apprunner-example-connection/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ParameterKey=GitHubRepositoryUrl,ParameterValue=https://github.com/xxxxx/backend
 ```
 
-* BFF APの起動
+* BFFアプリケーションの起動
 ```sh
 aws cloudformation validate-template --template-body file://cfn-apprunner-bff.yaml
 aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body  file://cfn-apprunner-bff.yaml ParameterKey=GitHubConnectionArn,ParameterValue=(GitHub接続のARN)ParameterKey=GitHubRepositoryUrl,ParameterValue=(GitHubのリポジトリのURL) 
@@ -48,3 +56,12 @@ aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body
 aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body  file://cfn-apprunner-bff.yaml 
  --parameters ParameterKey=GitHubConnectionArn,ParameterValue=arn:aws:apprunner:ap-northeast-1:999999999999:connection/apprunner-example-connection/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ParameterKey=GitHubRepositoryUrl,ParameterValue=https://github.com/xxxxx/backend-for-frontend
 ```
+
+### 2. APの実行確認
+* Backendアプリケーションの確認
+  * ブラウザで「http://(Public ALBのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
+    * CloudFormationの「APPRUNNER-BG-Stack」スタックの出力「BackendServiceURI」のURLを参照
+
+* BFFアプリケーションの確認    
+  * ブラウザで「http://(Public ALBのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
+    * CloudFormationの「APPRUNNER-BFF-Stack」スタックの出力「BffServiceURI」のURLを参照
