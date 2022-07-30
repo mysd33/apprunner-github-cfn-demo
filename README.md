@@ -42,9 +42,9 @@
 ```sh
 aws cloudformation validate-template --template-body file://cfn-apprunner-backend.yaml
 
-aws cloudformation create-stack --stack-name APPRUNNER-BG-Stack --template-body file://cfn-apprunner-backend.yaml ParameterKey=GitHubConnectionArn,ParameterValue=(GitHub接続のARN)ParameterKey=GitHubRepositoryUrl,ParameterValue=(GitHubのリポジトリのURL) 
+aws cloudformation create-stack --stack-name APPRUNNER-BACKEND-Stack --template-body file://cfn-apprunner-backend.yaml ParameterKey=GitHubConnectionArn,ParameterValue=(GitHub接続のARN)ParameterKey=GitHubRepositoryUrl,ParameterValue=(GitHubのリポジトリのURL) 
 #例
-aws cloudformation create-stack --stack-name APPRUNNER-BG-Stack --template-body file://cfn-apprunner-backend.yaml --parameters ParameterKey=GitHubConnectionArn,ParameterValue=arn:aws:apprunner:ap-northeast-1:999999999999:connection/apprunner-example-connection/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ParameterKey=GitHubRepositoryUrl,ParameterValue=https://github.com/xxxxx/backend
+aws cloudformation create-stack --stack-name APPRUNNER-BACKEND-Stack --template-body file://cfn-apprunner-backend.yaml --parameters ParameterKey=GitHubConnectionArn,ParameterValue=arn:aws:apprunner:ap-northeast-1:999999999999:connection/apprunner-example-connection/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ParameterKey=GitHubRepositoryUrl,ParameterValue=https://github.com/xxxxx/backend
 ```
 
 * BFFアプリケーションの起動
@@ -60,7 +60,7 @@ aws cloudformation create-stack --stack-name APPRUNNER-BFF-Stack --template-body
 ### 2. APの実行確認
 * Backendアプリケーションの確認
   * ブラウザで「http://(AppRunnerのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
-    * CloudFormationの「APPRUNNER-BG-Stack」スタックの出力「BackendServiceURI」のURLを参照
+    * CloudFormationの「APPRUNNER-BACKEND-Stack」スタックの出力「BackendServiceURI」のURLを参照
 
 * BFFアプリケーションの確認    
   * ブラウザで「http://(AppRunnerのDNS名)/backend-for-frontend/index.html」を入力しフロントエンドAPの画面が表示される
